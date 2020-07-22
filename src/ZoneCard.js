@@ -153,7 +153,7 @@ export class ZoneCard extends LitElement {
             entities.push(this.zones[i]);
           }
         }
-  
+
         for (let i = 0; i < entities.length; i += 1) {
           entities[i].hass = this.hass;
         }
