@@ -9,5 +9,5 @@ module.exports = {
   appIndex: 'demo/index.html',
   plugins: [],
   moduleDirs: ['node_modules'],
-  middlewares: [ cors() ],
+  middlewares: [cors()],
 };

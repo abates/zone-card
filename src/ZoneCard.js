@@ -29,7 +29,6 @@ export class ZoneCard extends LitElement {
 
       .transparent {
         background-color: rgba(255, 255, 255, 0.7);
-        
       }
     `;
   }
@@ -45,7 +44,7 @@ export class ZoneCard extends LitElement {
     }
 
     if (!config.zones) {
-      throw new Error('Zone entities must be specified')
+      throw new Error('Zone entities must be specified');
     }
 
     this.config = {
@@ -62,18 +61,18 @@ export class ZoneCard extends LitElement {
           play_pause: true,
           prev: true,
           ...(config.options ? config.options.hide : {}),
-        }
+        },
       },
     };
 
     this.controllerConfig = {
       entity: this.config.controller,
       ...this.config.options,
-    }
+    };
 
-    this.sources = {}
+    this.sources = {};
     if (config.sources) {
-      for (let i=0; i<config.sources.length; i+=1) {
+      for (let i = 0; i < config.sources.length; i += 1) {
         this.sources[config.sources[i].name] = config.sources[i].options;
       }
     }
@@ -91,12 +90,12 @@ export class ZoneCard extends LitElement {
         source: true,
         ...this.config.zone_options.hide,
       },
-    }
+    };
     this.config.zone_options = zoneOptions;
 
     this.zones = [];
-    for (let i=0; i<config.zones.length; i+=1) {
-      this.zones.push(document.createElement("mini-media-player"));
+    for (let i = 0; i < config.zones.length; i += 1) {
+      this.zones.push(document.createElement('mini-media-player'));
       this.zones[i].setConfig({
         entity: config.zones[i],
         ...zoneOptions,
@@ -108,7 +107,7 @@ export class ZoneCard extends LitElement {
   getCardSize() {
     return 2;
   }
-  
+
   firstUpdated() {
     this.controller = this.shadowRoot.getElementById('controller');
     this.controller.setConfig(this.controllerConfig);
@@ -116,7 +115,7 @@ export class ZoneCard extends LitElement {
 
   updated(changedProperties) {
     const entities = [];
-    if(changedProperties.has("hass") && this.hass) {
+    if (changedProperties.has('hass') && this.hass) {
       this.state = this.hass.states[this.config.controller];
       this.source = this.state.attributes.source;
       this.controller.hass = this.hass;
@@ -125,12 +124,12 @@ export class ZoneCard extends LitElement {
         if (this.sourceConfig !== this.sources[this.source]) {
           this.sourceConfig = this.sources[this.source];
           if (this.sourceConfig) {
-            this.sourcePlayer = document.createElement("mini-media-player");
+            this.sourcePlayer = document.createElement('mini-media-player');
             this.sourcePlayer.setConfig(this.sourceConfig);
           } else {
             this.sourcePlayer = undefined;
           }
-        }         
+        }
       } else {
         this.sourcePlayer = undefined;
       }
@@ -147,14 +146,18 @@ export class ZoneCard extends LitElement {
       } else {
         this.backgroundUrl = undefined;
       }
-      
-      for (let i=0; i<this.zones.length; i+=1) {
-        if (this.hass.states[this.config.zones[i]] && this.hass.states[this.config.zones[i]].attributes.source === this.source) {
+
+      for (let i = 0; i < this.zones.length; i += 1) {
+        if (
+          this.hass.states[this.config.zones[i]] &&
+          this.hass.states[this.config.zones[i]].attributes.source ===
+            this.source
+        ) {
           entities.push(this.zones[i]);
         }
       }
 
-      for (let i=0; i<entities.length; i+=1) {
+      for (let i = 0; i < entities.length; i += 1) {
         entities[i].hass = this.hass;
       }
       this.entities = entities;
@@ -163,7 +166,7 @@ export class ZoneCard extends LitElement {
 
   renderEntities() {
     const content = this.entities.map(entity => html`<div>${entity}</div>`);
-    return html`${content}`
+    return html`${content}`;
   }
 
   cardStyle() {
@@ -179,23 +182,21 @@ export class ZoneCard extends LitElement {
   }
 
   contentClasses() {
-    const classes = [
-      "card-content",
-    ]
+    const classes = ['card-content'];
     if (this.backgroundUrl) {
       classes.push('transparent');
     }
 
     return classes.join(' ');
   }
-  
+
   render() {
     return html`
       <ha-card style="${styleMap(this.cardStyle())}">
         <div class="${this.contentClasses()}">
           <div>
             <!-- zone controller -->
-            <mini-media-player id='controller'></mini-media-player>
+            <mini-media-player id="controller"></mini-media-player>
           </div>
           ${this.renderEntities()}
         </div>
