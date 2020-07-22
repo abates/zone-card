@@ -12,4 +12,5 @@ deploy:
   file: dist/zone-card-bundle.js
   on:
     repo: abates/zone-card
+    tags: true
   skip_cleanup: 'true'
