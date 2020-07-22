@@ -50,10 +50,11 @@ export class ZoneCard extends LitElement {
     this.config = {
       ...config,
       options: {
-        ...config.options,
         group: true,
         icon: 'mdi:music-circle',
+        ...config.options,
         hide: {
+          power_state: false,
           controls: true,
           info: false,
           name: true,
@@ -143,24 +144,24 @@ export class ZoneCard extends LitElement {
 
       if (this.sourceState) {
         this.backgroundUrl = this.sourceState.attributes.entity_picture;
+        for (let i = 0; i < this.zones.length; i += 1) {
+          if (
+            this.hass.states[this.config.zones[i]] &&
+            this.hass.states[this.config.zones[i]].attributes.source ===
+              this.source
+          ) {
+            entities.push(this.zones[i]);
+          }
+        }
+  
+        for (let i = 0; i < entities.length; i += 1) {
+          entities[i].hass = this.hass;
+        }
+        this.entities = entities;
       } else {
         this.backgroundUrl = undefined;
+        this.entities = [];
       }
-
-      for (let i = 0; i < this.zones.length; i += 1) {
-        if (
-          this.hass.states[this.config.zones[i]] &&
-          this.hass.states[this.config.zones[i]].attributes.source ===
-            this.source
-        ) {
-          entities.push(this.zones[i]);
-        }
-      }
-
-      for (let i = 0; i < entities.length; i += 1) {
-        entities[i].hass = this.hass;
-      }
-      this.entities = entities;
     }
   }
 
