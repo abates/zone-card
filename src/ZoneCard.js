@@ -4,7 +4,8 @@ import { styleMap } from 'lit-html/directives/style-map';
 export class ZoneCard extends LitElement {
   static get properties() {
     return {
-      entities: [],
+      zones: [],
+      sourcePlayer: { type: Object },
       backgroundUrl: { type: String },
       hass: { type: Object },
     };
@@ -27,15 +28,14 @@ export class ZoneCard extends LitElement {
         padding: 0 16px 16px;
       }
 
+      .source-player {
+        min-height: 120px;
+      }
+
       .transparent {
         background-color: rgba(255, 255, 255, 0.7);
       }
     `;
-  }
-
-  constructor() {
-    super();
-    this.entities = [];
   }
 
   setConfig(config) {
@@ -84,6 +84,7 @@ export class ZoneCard extends LitElement {
       group: true,
       ...this.config.zone_options,
       hide: {
+        icon: true,
         controls: true,
         info: true,
         power: false,
@@ -96,11 +97,11 @@ export class ZoneCard extends LitElement {
 
     this.zones = [];
     for (let i = 0; i < config.zones.length; i += 1) {
-      this.zones.push(document.createElement('mini-media-player'));
-      this.zones[i].setConfig({
+      this.zones.push(document.createElement('zone-row'));
+      this.zones[i].config = {
         entity: config.zones[i],
         ...zoneOptions,
-      });
+      };
     }
   }
 
@@ -115,7 +116,6 @@ export class ZoneCard extends LitElement {
   }
 
   updated(changedProperties) {
-    const entities = [];
     if (changedProperties.has('hass') && this.hass) {
       this.state = this.hass.states[this.config.controller];
       this.source = this.state.attributes.source;
@@ -136,38 +136,23 @@ export class ZoneCard extends LitElement {
       }
 
       if (this.sourcePlayer) {
+        this.sourcePlayer.hass = this.hass;
         this.sourceState = this.hass.states[this.sourceConfig.entity];
-        entities.push(this.sourcePlayer);
       } else {
         this.sourceState = undefined;
       }
 
       if (this.sourceState) {
         this.backgroundUrl = this.sourceState.attributes.entity_picture;
-        for (let i = 0; i < this.zones.length; i += 1) {
-          if (
-            this.hass.states[this.config.zones[i]] &&
-            this.hass.states[this.config.zones[i]].attributes.source ===
-              this.source
-          ) {
-            entities.push(this.zones[i]);
-          }
-        }
 
-        for (let i = 0; i < entities.length; i += 1) {
-          entities[i].hass = this.hass;
+        for (let i = 0; i < this.zones.length; i += 1) {
+          this.zones[i].source = this.source
+          this.zones[i].hass = this.hass;
         }
-        this.entities = entities;
       } else {
         this.backgroundUrl = undefined;
-        this.entities = [];
       }
     }
-  }
-
-  renderEntities() {
-    const content = this.entities.map(entity => html`<div>${entity}</div>`);
-    return html`${content}`;
   }
 
   cardStyle() {
@@ -199,7 +184,8 @@ export class ZoneCard extends LitElement {
             <!-- zone controller -->
             <mini-media-player id="controller"></mini-media-player>
           </div>
-          ${this.renderEntities()}
+          <div class="source-player">${this.sourcePlayer ? html`${this.sourcePlayer}` : 'foo'}</div>
+          ${this.zones.map(zone => html`${zone}`)}
         </div>
       </ha-card>
     `;
