@@ -146,7 +146,7 @@ export class ZoneCard extends LitElement {
         this.backgroundUrl = this.sourceState.attributes.entity_picture;
 
         for (let i = 0; i < this.zones.length; i += 1) {
-          this.zones[i].source = this.source
+          this.zones[i].source = this.source;
           this.zones[i].hass = this.hass;
         }
       } else {
@@ -184,7 +184,9 @@ export class ZoneCard extends LitElement {
             <!-- zone controller -->
             <mini-media-player id="controller"></mini-media-player>
           </div>
-          <div class="source-player">${this.sourcePlayer ? html`${this.sourcePlayer}` : 'foo'}</div>
+          <div class="source-player">
+            ${this.sourcePlayer ? html`${this.sourcePlayer}` : 'foo'}
+          </div>
           ${this.zones.map(zone => html`${zone}`)}
         </div>
       </ha-card>
