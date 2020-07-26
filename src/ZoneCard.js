@@ -1,12 +1,12 @@
 import { html, css, LitElement } from 'lit-element';
-import { styleMap } from 'lit-html/directives/style-map';
 
 export class ZoneCard extends LitElement {
   static get properties() {
     return {
-      zones: [],
+      entity: { type: String },
+      source: { type: String },
+      sourceList: { type: Array },
       sourcePlayer: { type: Object },
-      backgroundUrl: { type: String },
       hass: { type: Object },
     };
   }
@@ -19,13 +19,29 @@ export class ZoneCard extends LitElement {
         --mini-media-player-button-color: rgba(255, 255, 255, 0.7);
       }
 
+      ha-icon.source-input {
+        margin-top: 17px;
+        padding: 12px;
+      }
+
       ha-card {
         display: flex;
         flex-direction: column;
       }
 
       ha-card div {
-        padding: 0 16px 16px;
+        padding: 0 16px 0px;
+      }
+
+      .flex {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        padding: 0;
+      }
+
+      .right {
+        justify-content: flex-end;
       }
 
       .source-player {
@@ -38,6 +54,11 @@ export class ZoneCard extends LitElement {
     `;
   }
 
+  constructor() {
+    super();
+    this.sourceList = [];
+  }
+
   setConfig(config) {
     if (!config.controller) {
       throw new Error('You need to define an controller');
@@ -46,6 +67,8 @@ export class ZoneCard extends LitElement {
     if (!config.zones) {
       throw new Error('Zone entities must be specified');
     }
+
+    this.entity = config.controller;
 
     this.config = {
       ...config,
@@ -78,55 +101,32 @@ export class ZoneCard extends LitElement {
       }
     }
 
-    this.config.zone_options = config.zone_options || {};
-
-    const zoneOptions = {
-      group: true,
-      ...this.config.zone_options,
-      hide: {
-        icon: true,
-        controls: true,
-        info: true,
-        power: false,
-        power_state: true,
-        source: true,
-        ...this.config.zone_options.hide,
-      },
-    };
-    this.config.zone_options = zoneOptions;
-
     this.zones = [];
     for (let i = 0; i < config.zones.length; i += 1) {
-      this.zones.push(document.createElement('zone-row'));
-      this.zones[i].config = {
-        entity: config.zones[i],
-        ...zoneOptions,
-      };
+      this.zones.push(document.createElement('zone-control'));
+      this.zones[i].entity = config.zones[i];
     }
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  getCardSize() {
-    return 2;
   }
 
   firstUpdated() {
     this.controller = this.shadowRoot.getElementById('controller');
-    this.controller.setConfig(this.controllerConfig);
+    this.background = this.shadowRoot.getElementById('background');
   }
 
   updated(changedProperties) {
     if (changedProperties.has('hass') && this.hass) {
       this.state = this.hass.states[this.config.controller];
-      this.source = this.state.attributes.source;
-      this.controller.hass = this.hass;
-
       if (this.state) {
+        this.name = this.state.attributes.friendly_name || this.entity;
+        this.source = this.state.attributes.source;
+        this.sourceList = this.state.attributes.source_list;
+
         if (this.sourceConfig !== this.sources[this.source]) {
           this.sourceConfig = this.sources[this.source];
           if (this.sourceConfig) {
             this.sourcePlayer = document.createElement('mini-media-player');
             this.sourcePlayer.setConfig(this.sourceConfig);
+            this.sourceEntity = this.sourceConfig.entity;
           } else {
             this.sourcePlayer = undefined;
           }
@@ -142,50 +142,67 @@ export class ZoneCard extends LitElement {
         this.sourceState = undefined;
       }
 
-      if (this.sourceState) {
-        this.backgroundUrl = this.sourceState.attributes.entity_picture;
+      this.controller.hass = this.hass;
+      this.background.hass = this.hass;
 
-        for (let i = 0; i < this.zones.length; i += 1) {
-          this.zones[i].source = this.source;
-          this.zones[i].hass = this.hass;
-        }
-      } else {
-        this.backgroundUrl = undefined;
+      for (let i = 0; i < this.zones.length; i += 1) {
+        this.zones[i].hass = this.hass;
+        this.zones[i].controllerSource = this.source;
       }
     }
   }
 
-  cardStyle() {
-    if (this.backgroundUrl) {
-      return {
-        backgroundImage: `url(${this.backgroundUrl})`,
-        backgroundRepeat: 'no-repeat',
-        backgroundPosition: 'center',
-        backgroundSize: '100%',
-      };
+  handleSourceChanged(ev) {
+    const source = ev.detail.value;
+    if (this.source !== source) {
+      this.source = source;
+      this.hass.callService('media_player', 'select_source', {
+        entity_id: this.entity,
+        source: this.source,
+      });
     }
-    return {};
-  }
-
-  contentClasses() {
-    const classes = ['card-content'];
-    if (this.backgroundUrl) {
-      classes.push('transparent');
-    }
-
-    return classes.join(' ');
   }
 
   render() {
     return html`
-      <ha-card style="${styleMap(this.cardStyle())}">
-        <div class="${this.contentClasses()}">
-          <div>
-            <!-- zone controller -->
-            <mini-media-player id="controller"></mini-media-player>
+      <ha-card header="${this.name}">
+        <zone-background
+          id="background"
+          entity=${this.sourceEntity}
+        ></zone-background>
+        <div class="cardContent transparent">
+          <!-- zone controller -->
+          <zone-control
+            id="controller"
+            entity="${this.entity}"
+            controllerSource="${this.source}"
+            hideName
+          ></zone-control>
+          <div class="flex right">
+            <ha-paper-dropdown-menu
+              class="flex source-input"
+              dynamic-align=""
+              label-float=""
+              label=""
+            >
+              <paper-listbox
+                slot="dropdown-content"
+                attr-for-selected="item-name"
+                selected="${this.source}"
+                @selected-changed="${this.handleSourceChanged}"
+              >
+                ${this.sourceList.map(
+                  source =>
+                    html`<paper-item item-name="${source}"
+                      >${source}</paper-item
+                    >`
+                )}
+              </paper-listbox>
+            </ha-paper-dropdown-menu>
+            <ha-icon class="source-input" icon="hass:login-variant"></ha-icon>
           </div>
           <div class="source-player">
-            ${this.sourcePlayer ? html`${this.sourcePlayer}` : 'foo'}
+            ${this.sourcePlayer ? html`${this.sourcePlayer}` : ''}
           </div>
           ${this.zones.map(zone => html`${zone}`)}
         </div>

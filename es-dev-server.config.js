@@ -5,6 +5,7 @@ module.exports = {
   cors: true,
   watch: true,
   open: false,
+  babel: true,
   nodeResolve: true,
   appIndex: 'demo/index.html',
   plugins: [],
