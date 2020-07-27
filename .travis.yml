@@ -7,7 +7,7 @@ deploy:
   provider: releases
   api_key:
     secure: 2KjMXoIauzfBLGHf03yxQeI7E3iPwbfOX9ew/Bfmv5Epoi34t7hMVSHAXr1gmnb919+pBBCECGmVy+xCnF0zcuoa3VwCHIwIe7OE0LosAmD4PIoHWCjXHF/Wpj/RGC7bFEOF/g6SXrKbVyjF4DUhjzrV7Uy+RsTrFlFRLpwqyrDs5ElUyyMoV9H0VcVriETF4S8aglHPATlAKpmKnB8Pd2APfgoO6tPcsGSqM8js6bzxzR9Cn6bM0AyzGtCWcEe1LGQsVPI46MGwcO3fOdHud+Onef99qrXWoOCz5U4uUZ0wt601s5sqDQfhZHBceb/M6jYNaVfoUIQ3KEfJWTMZu22PiuzOKr0A+GIjOIpvyWioZtjM1AgpMB0QiUtpo/k7qm26CNGyZG7M99pntwTU4XynmsWdjntY7c1bLT5FYJWDazVutifpohrc+NR0bcaHfk928DXRNo49WuvovyevfYAEP9lEU6+YV4/kh0HtzHTAD+MbXxEXzvUekxD7kvygbWMWr4kcMbyZUdiG5QExINcutUUY9psA9K9D6LywqzPppxA29NNx+DiYNBqI8NE4rt4KSOa+ZZiZ0843vXmHpPlcEc5nBbgfS19CoVWADS+MmuHI6FQla2Lg7qEQ7OwPERgqgW1THq1VN3+8m4YcrEdjr6WWqyVUlZnFCnIGG3Q=
-  file: dist/zone-card-bundle.js
+  file: dist/zone-card.js
   on:
     repo: abates/zone-card
     tags: true
