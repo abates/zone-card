@@ -1,4 +1,5 @@
 import { html, css, LitElement } from 'lit-element';
+import { styleMap } from 'lit-html/directives/style-map';
 
 export class ZoneCard extends LitElement {
   static get properties() {
@@ -7,6 +8,8 @@ export class ZoneCard extends LitElement {
       source: { type: String },
       sourceList: { type: Array },
       sourcePlayer: { type: Object },
+      backgroundColor: { type: String },
+      foregroundColor: { type: String },
       hass: { type: Object },
     };
   }
@@ -16,7 +19,6 @@ export class ZoneCard extends LitElement {
       :host {
         display: block;
         color: var(--zone-card-text-color, #000);
-        --mini-media-player-button-color: rgba(255, 255, 255, 0.7);
       }
 
       ha-icon.source-input {
@@ -27,6 +29,7 @@ export class ZoneCard extends LitElement {
       ha-card {
         display: flex;
         flex-direction: column;
+        background-color: transparent;
       }
 
       ha-card div {
@@ -57,6 +60,7 @@ export class ZoneCard extends LitElement {
   constructor() {
     super();
     this.sourceList = [];
+    this.backgroundColor = 'rgb(255,255,255,1.0)';
   }
 
   setConfig(config) {
@@ -138,12 +142,19 @@ export class ZoneCard extends LitElement {
       if (this.sourcePlayer) {
         this.sourcePlayer.hass = this.hass;
         this.sourceState = this.hass.states[this.sourceConfig.entity];
+        if (
+          this.sourceState &&
+          this._backgroundSrc !== this.sourceState.attributes.entity_picture
+        ) {
+          this._backgroundSrc = this.hass.hassUrl(
+            this.sourceState.attributes.entity_picture
+          );
+        }
       } else {
         this.sourceState = undefined;
       }
 
       this.controller.hass = this.hass;
-      this.background.hass = this.hass;
 
       for (let i = 0; i < this.zones.length; i += 1) {
         this.zones[i].hass = this.hass;
@@ -163,50 +174,67 @@ export class ZoneCard extends LitElement {
     }
   }
 
+  _backgroundChanged(ev) {
+    this.backgroundColor = ev.detail.backgroundColor;
+    this.foregroundColor = ev.detail.foregroundColor;
+  }
+
   render() {
+    const haCardStyle = {
+      '--primary-text-color': this.foregroundColor,
+      '--secondary-text-color': this.foregroundColor,
+      '--ha-card-header-color': this.foregroundColor,
+      '--zone-card-text-color': this.foregroundColor,
+      '--mini-media-player-button-color': `${this.backgroundColor}b2`,
+    };
+
     return html`
-      <ha-card header="${this.name}">
-        <zone-background
-          id="background"
-          entity=${this.sourceEntity}
-        ></zone-background>
-        <div class="cardContent transparent">
-          <!-- zone controller -->
-          <zone-control
-            id="controller"
-            entity="${this.entity}"
-            controllerSource="${this.source}"
-            hideName
-          ></zone-control>
-          <div class="flex right">
-            <ha-paper-dropdown-menu
-              class="flex source-input"
-              dynamic-align=""
-              label-float=""
-              label=""
-            >
-              <paper-listbox
-                slot="dropdown-content"
-                attr-for-selected="item-name"
-                selected="${this.source}"
-                @selected-changed="${this.handleSourceChanged}"
+      <zone-background
+        id="background"
+        src=${this._backgroundSrc ? this._backgroundSrc : ''}
+        @background-changed=${this._backgroundChanged}
+      >
+        <ha-card header="${this.name}" style="${styleMap(haCardStyle)}">
+          <div class="cardContent">
+            <!-- zone controller -->
+            <zone-control
+              id="controller"
+              entity="${this.entity}"
+              controllerSource="${this.source}"
+              hideName
+            ></zone-control>
+            <div class="flex right">
+              <ha-paper-dropdown-menu
+                class="flex source-input"
+                dynamic-align=""
+                label-float=""
+                label=""
+                style="--paper-input-container-input-color: ${this
+                  .foregroundColor}"
               >
-                ${this.sourceList.map(
-                  source =>
-                    html`<paper-item item-name="${source}"
-                      >${source}</paper-item
-                    >`
-                )}
-              </paper-listbox>
-            </ha-paper-dropdown-menu>
-            <ha-icon class="source-input" icon="hass:login-variant"></ha-icon>
+                <paper-listbox
+                  slot="dropdown-content"
+                  attr-for-selected="item-name"
+                  selected="${this.source}"
+                  @selected-changed="${this.handleSourceChanged}"
+                >
+                  ${this.sourceList.map(
+                    source =>
+                      html`<paper-item item-name="${source}"
+                        >${source}</paper-item
+                      >`
+                  )}
+                </paper-listbox>
+              </ha-paper-dropdown-menu>
+              <ha-icon class="source-input" icon="hass:login-variant"></ha-icon>
+            </div>
+            <div class="source-player">
+              ${this.sourcePlayer ? html`${this.sourcePlayer}` : ''}
+            </div>
+            ${this.zones.map(zone => html`${zone}`)}
           </div>
-          <div class="source-player">
-            ${this.sourcePlayer ? html`${this.sourcePlayer}` : ''}
-          </div>
-          ${this.zones.map(zone => html`${zone}`)}
-        </div>
-      </ha-card>
+        </ha-card>
+      </zone-background>
     `;
   }
 }

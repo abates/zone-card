@@ -40,12 +40,12 @@ export class ZoneControl extends LitElement {
       }
 
       ha-icon-button {
-        color: var(--mmp-text-color, var(--primary-text-color));
+        color: var(--zone-card-text-color, var(--primary-text-color));
         transition: color 0.25s;
       }
 
       ha-icon-button[color] {
-        color: var(--mmp-accent-color, var(--accent-color)) !important;
+        color: var(--accent-color) !important;
         opacity: 1 !important;
       }
     `;
