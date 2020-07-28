@@ -106,7 +106,6 @@ export class ZoneBackground extends LitElement {
   static get properties() {
     return {
       src: { type: String },
-      backgroundColor: { type: String },
       cardWidth: { type: Number },
       cardHeight: { type: Number },
     };
@@ -115,17 +114,20 @@ export class ZoneBackground extends LitElement {
   static get styles() {
     return css`
       :host {
-        /*position: absolute;*/
         width: 100%;
         height: 100%;
+      }
+
+      .no-image {
+        background-color: #c8c8c8;
       }
     `;
   }
 
   constructor() {
     super();
-    this.backgroundColor = '#000000';
-    this.foregroundColor = '#ffffff';
+    this._backgroundColor = '#000';
+    this._foregroundColor = '#fff';
   }
 
   async _attachObserver() {
@@ -153,8 +155,20 @@ export class ZoneBackground extends LitElement {
     this._attachObserver();
   }
 
-  updated(changedProperties) {
-    if (changedProperties.has('src') && this.src && this.src !== '') {
+  get backgroundColor() {
+    return this._backgroundColor;
+  }
+
+  get src() {
+    return this._src;
+  }
+
+  set src(src) {
+    const oldSrc = this._src;
+    const oldBackground = this._backgroundColor;
+
+    this._src = src;
+    if (this._src && this._src !== '') {
       // eslint-disable-next-line no-undef
       new Vibrant(this.src, {
         colorCount: 16,
@@ -162,43 +176,75 @@ export class ZoneBackground extends LitElement {
       })
         .getPalette()
         .then(v => {
-          [this.foregroundColor, this.backgroundColor] = v;
-          this.dispatchEvent(
-            new CustomEvent('background-changed', {
-              detail: {
-                foregroundColor: this.foregroundColor,
-                backgroundColor: this.backgroundColor,
-              },
-            })
-          );
+          [this._foregroundColor, this._backgroundColor] = v;
+          this.requestUpdate('backgroundColor', oldBackground);
         });
+    } else {
+      this._foregroundColor = '#000';
+      this._backgroundColor = '#929292';
+      this.requestUpdate('backgroundColor', oldBackground);
+    }
+    this.requestUpdate('src', oldSrc);
+  }
+
+  updated(changedProperties) {
+    if (changedProperties.has('backgroundColor')) {
+      this.dispatchEvent(
+        new CustomEvent('background-changed', {
+          detail: {
+            foregroundColor: this._foregroundColor,
+            backgroundColor: this._backgroundColor,
+          },
+        })
+      );
     }
   }
 
   render() {
+    if (this.src) {
+      return this.renderImage();
+    }
+    return html`
+      <div id="background" class="no-image">
+        <slot></slot>
+      </div>
+    `;
+  }
+
+  renderImage() {
     let backgroundWidth = 'auto';
-    const width = this.cardWidth ? `${this.cardWidth}px` : 'auto';
+    let width = this.cardWidth ? `${this.cardWidth}px` : 'auto';
 
     let backgroundHeight = 'auto';
-    const height = this.cardHeight ? `${this.cardHeight}px` : 'auto';
+    let height = this.cardHeight ? `${this.cardHeight}px` : 'auto';
 
     let gradientDirection = 'to right';
     if (this.cardWidth && this.cardWidth < this.cardHeight) {
       backgroundHeight = `${this.cardWidth}px`;
+      height = backgroundHeight;
       gradientDirection = 'to top';
     } else if (this.cardHeight) {
       backgroundWidth = `${this.cardHeight}px`;
+      width = backgroundWidth;
     }
 
     const imageStyle = {
       'background-image': this.src ? `url(${this.src})` : 'none',
       'background-repeat': 'no-repeat',
       'background-size': `${backgroundWidth} ${backgroundHeight}`,
+      'background-color': this._backgroundColor,
     };
 
     const gradientStyle = {
       position: 'absolute',
-      'background-image': `linear-gradient(${gradientDirection}, ${this.backgroundColor}, ${this.backgroundColor}00)`,
+      'background-image': `linear-gradient(${gradientDirection}, ${this._backgroundColor}, ${this._backgroundColor}00)`,
+      width,
+      height,
+    };
+
+    const overlayStyle = {
+      position: 'absolute',
+      'background-color': `${this._backgroundColor}7f`,
       width,
       height,
     };
@@ -206,6 +252,7 @@ export class ZoneBackground extends LitElement {
     return html`
       <div id="background" style="${styleMap(imageStyle)}">
         <div style="${styleMap(gradientStyle)}"></div>
+        <div style="${styleMap(overlayStyle)}"></div>
         <slot></slot>
       </div>
     `;

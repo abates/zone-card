@@ -4,13 +4,8 @@ import { styleMap } from 'lit-html/directives/style-map';
 export class ZoneCard extends LitElement {
   static get properties() {
     return {
-      entity: { type: String },
-      source: { type: String },
-      sourceList: { type: Array },
-      sourcePlayer: { type: Object },
       backgroundColor: { type: String },
       foregroundColor: { type: String },
-      hass: { type: Object },
     };
   }
 
@@ -59,7 +54,7 @@ export class ZoneCard extends LitElement {
 
   constructor() {
     super();
-    this.sourceList = [];
+    this._sourceList = [];
     this.backgroundColor = 'rgb(255,255,255,1.0)';
   }
 
@@ -98,10 +93,10 @@ export class ZoneCard extends LitElement {
       ...this.config.options,
     };
 
-    this.sources = {};
+    this._sources = {};
     if (config.sources) {
       for (let i = 0; i < config.sources.length; i += 1) {
-        this.sources[config.sources[i].name] = config.sources[i].options;
+        this._sources[config.sources[i].name] = config.sources[i].options;
       }
     }
 
@@ -117,60 +112,74 @@ export class ZoneCard extends LitElement {
     this.background = this.shadowRoot.getElementById('background');
   }
 
-  updated(changedProperties) {
-    if (changedProperties.has('hass') && this.hass) {
-      this.state = this.hass.states[this.config.controller];
-      if (this.state) {
-        this.name = this.state.attributes.friendly_name || this.entity;
-        this.source = this.state.attributes.source;
-        this.sourceList = this.state.attributes.source_list;
+  set hass(hass) {
+    const oldHass = this._hass;
+    this._hass = hass;
+    if (this._hass) {
+      this._state = this._hass.states[this.config.controller];
+      if (this._state) {
+        this._name = this._state.attributes.friendly_name || this.entity;
+        this._source = this._state.attributes.source;
+        this._sourceList = this._state.attributes.source_list;
 
-        if (this.sourceConfig !== this.sources[this.source]) {
-          this.sourceConfig = this.sources[this.source];
-          if (this.sourceConfig) {
-            this.sourcePlayer = document.createElement('mini-media-player');
-            this.sourcePlayer.setConfig(this.sourceConfig);
-            this.sourceEntity = this.sourceConfig.entity;
+        if (this._sourceConfig !== this._sources[this._source]) {
+          this._sourceConfig = this._sources[this._source];
+          if (this._sourceConfig) {
+            this._sourcePlayer = document.createElement('mini-media-player');
+            this._sourcePlayer.setConfig(this._sourceConfig);
+            this._sourceEntity = this._sourceConfig.entity;
           } else {
-            this.sourcePlayer = undefined;
+            this._sourcePlayer = undefined;
           }
         }
       } else {
-        this.sourcePlayer = undefined;
+        this._sourcePlayer = undefined;
       }
 
-      if (this.sourcePlayer) {
-        this.sourcePlayer.hass = this.hass;
-        this.sourceState = this.hass.states[this.sourceConfig.entity];
+      if (this._sourcePlayer) {
+        this._sourcePlayer.hass = this._hass;
+        this._sourceState = this._hass.states[this._sourceConfig.entity];
         if (
-          this.sourceState &&
-          this._backgroundSrc !== this.sourceState.attributes.entity_picture
+          this._sourceState &&
+          this._backgroundSrc !== this._sourceState.attributes.entity_picture
         ) {
-          this._backgroundSrc = this.hass.hassUrl(
-            this.sourceState.attributes.entity_picture
+          this._backgroundSrc = this._hass.hassUrl(
+            this._sourceState.attributes.entity_picture
           );
         }
       } else {
-        this.sourceState = undefined;
+        this._backgroundSrc = undefined;
+        this._sourceState = undefined;
       }
+    }
+    this.requestUpdate('hass', oldHass);
+  }
 
-      this.controller.hass = this.hass;
+  updated(changedProperties) {
+    if (changedProperties.has('hass') && this.hass) {
+      this.controller.hass = this._hass;
 
       for (let i = 0; i < this.zones.length; i += 1) {
-        this.zones[i].hass = this.hass;
-        this.zones[i].controllerSource = this.source;
+        this.zones[i].hass = this._hass;
+        this.zones[i].controllerSource = this._source;
       }
     }
   }
 
+  get hass() {
+    return this._hass;
+  }
+
   handleSourceChanged(ev) {
     const source = ev.detail.value;
-    if (this.source !== source) {
-      this.source = source;
+    if (this._source !== source) {
+      this._source = source;
       this.hass.callService('media_player', 'select_source', {
         entity_id: this.entity,
-        source: this.source,
+        source: this._source,
       });
+      // Update the UI since the source has changed
+      this.requestUpdate();
     }
   }
 
@@ -194,14 +203,13 @@ export class ZoneCard extends LitElement {
         src=${this._backgroundSrc ? this._backgroundSrc : ''}
         @background-changed=${this._backgroundChanged}
       >
-        <ha-card header="${this.name}" style="${styleMap(haCardStyle)}">
+        <ha-card header="${this._name}" style="${styleMap(haCardStyle)}">
           <div class="cardContent">
             <!-- zone controller -->
             <zone-control
               id="controller"
               entity="${this.entity}"
-              controllerSource="${this.source}"
-              hideName
+              controllerSource="${this._source}"
             ></zone-control>
             <div class="flex right">
               <ha-paper-dropdown-menu
@@ -215,10 +223,10 @@ export class ZoneCard extends LitElement {
                 <paper-listbox
                   slot="dropdown-content"
                   attr-for-selected="item-name"
-                  selected="${this.source}"
+                  selected="${this._source}"
                   @selected-changed="${this.handleSourceChanged}"
                 >
-                  ${this.sourceList.map(
+                  ${this._sourceList.map(
                     source =>
                       html`<paper-item item-name="${source}"
                         >${source}</paper-item
@@ -229,7 +237,7 @@ export class ZoneCard extends LitElement {
               <ha-icon class="source-input" icon="hass:login-variant"></ha-icon>
             </div>
             <div class="source-player">
-              ${this.sourcePlayer ? html`${this.sourcePlayer}` : ''}
+              ${this._sourcePlayer ? html`${this._sourcePlayer}` : ''}
             </div>
             ${this.zones.map(zone => html`${zone}`)}
           </div>

@@ -5,8 +5,6 @@ export class ZoneControl extends LitElement {
   static get properties() {
     return {
       entity: { type: String },
-      active: { type: Boolean },
-      hideName: { type: Boolean },
       hass: { type: Object },
       controllerSource: { type: String },
       volume: { type: Number },
@@ -51,29 +49,21 @@ export class ZoneControl extends LitElement {
     `;
   }
 
-  updated(changedProperties) {
-    if (changedProperties.has('hass') && this.hass) {
-      this.state = this.hass.states[this.entity];
-
-      if (this.state) {
-        this.name = this.state.attributes.friendly_name || this.entity;
-        this.volume = this.state.attributes.volume_level;
-        this.source = this.state.attributes.source;
-      }
-    }
-  }
-
   get active() {
+    if (!this.controllerSource) {
+      return false;
+    }
+
     return (
-      this.source === this.controllerSource &&
-      this.state &&
-      this.state.state === 'on'
+      this._source === this.controllerSource &&
+      this._state &&
+      this._state.state === 'on'
     );
   }
 
   turnOn() {
-    if (this.state) {
-      if (this.state.state === 'off') {
+    if (this._state) {
+      if (this._state.state === 'off') {
         this.hass.callService('media_player', 'turn_on', {
           entity_id: this.entity,
         });
@@ -126,8 +116,18 @@ export class ZoneControl extends LitElement {
   }
 
   render() {
+    if (this.hass) {
+      this._state = this.hass.states[this.entity];
+
+      if (this._state) {
+        this._name = this._state.attributes.friendly_name || this.entity;
+        this._volume = this._state.attributes.volume_level;
+        this._source = this._state.attributes.source;
+      }
+    }
+
     return html`
-      ${this.hideName ? '' : html`<div class="label">${this.name}</div>`}
+      <div class="label">${this._name}</div>
       <ha-icon-button
         class="${classMap({ hidden: !this.active })}"
         icon="hass:volume-medium"
@@ -135,7 +135,7 @@ export class ZoneControl extends LitElement {
       ></ha-icon-button>
       <ha-paper-slider
         class="${classMap({ hidden: !this.active })}"
-        value=${this.volume * 100}
+        value=${this._volume * 100}
         @change=${this.setVolume}
       ></ha-paper-slider>
       <ha-icon-button
