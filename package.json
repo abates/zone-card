@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "@koa/cors": "^3.1.0",
+    "@polymer/iron-dropdown": "^3.0.1",
     "lit-element": "^2.2.1",
     "lit-html": "^1.1.2",
     "node-vibrant": "^3.1.5",

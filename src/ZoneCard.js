@@ -16,6 +16,16 @@ export class ZoneCard extends LitElement {
         color: var(--zone-card-text-color, #000);
       }
 
+      select {
+        border: none;
+        color: var(--zone-card-text-color, #000);
+        background-color: transparent;
+      }
+
+      select:focus {
+        outline: none;
+      }
+
       ha-icon.source-input {
         margin-top: 17px;
         padding: 12px;
@@ -110,6 +120,7 @@ export class ZoneCard extends LitElement {
   firstUpdated() {
     this.controller = this.shadowRoot.getElementById('controller');
     this.background = this.shadowRoot.getElementById('background');
+    this.sourceSelect = this.shadowRoot.getElementById('source');
   }
 
   set hass(hass) {
@@ -170,8 +181,9 @@ export class ZoneCard extends LitElement {
     return this._hass;
   }
 
-  handleSourceChanged(ev) {
-    const source = ev.detail.value;
+  handleSourceChanged() {
+    const source = this.sourceSelect.options[this.sourceSelect.selectedIndex]
+      .value;
     if (this._source !== source) {
       this._source = source;
       this.hass.callService('media_player', 'select_source', {
@@ -212,28 +224,15 @@ export class ZoneCard extends LitElement {
               controllerSource="${this._source}"
             ></zone-control>
             <div class="flex right">
-              <ha-paper-dropdown-menu
-                class="flex source-input"
-                dynamic-align=""
-                label-float=""
-                label=""
-                style="--paper-input-container-input-color: ${this
-                  .foregroundColor}"
-              >
-                <paper-listbox
-                  slot="dropdown-content"
-                  attr-for-selected="item-name"
-                  selected="${this._source}"
-                  @selected-changed="${this.handleSourceChanged}"
-                >
-                  ${this._sourceList.map(
-                    source =>
-                      html`<paper-item item-name="${source}"
-                        >${source}</paper-item
+              <select id="source" @change="${this.handleSourceChanged}">
+                ${this._sourceList.map(source =>
+                  this._source === source
+                    ? html`<option value="${source}" selected="selected"
+                        >${source}</option
                       >`
-                  )}
-                </paper-listbox>
-              </ha-paper-dropdown-menu>
+                    : html`<option value="${source}">${source}</option>`
+                )}
+              </select>
               <ha-icon class="source-input" icon="hass:login-variant"></ha-icon>
             </div>
             <div class="source-player">
