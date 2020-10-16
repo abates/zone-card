@@ -112,8 +112,10 @@ export class ZoneCard extends LitElement {
 
     this.zones = [];
     for (let i = 0; i < config.zones.length; i += 1) {
-      this.zones.push(document.createElement('zone-control'));
-      this.zones[i].entity = config.zones[i];
+      if (config.zones[i] !== this.config.controller) {
+        this.zones.push(document.createElement('zone-control'));
+        this.zones[this.zones.length - 1].entity = config.zones[i];
+      }
     }
   }
 
