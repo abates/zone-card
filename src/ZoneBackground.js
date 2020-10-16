@@ -119,7 +119,9 @@ export class ZoneBackground extends LitElement {
       }
 
       .no-image {
-        background-color: #c8c8c8;
+        color: var(--text-primary-color);
+        background-color: var(--primary-color);
+        border-radius: var(--ha-card-border-radius, 4px);
       }
     `;
   }
@@ -178,10 +180,19 @@ export class ZoneBackground extends LitElement {
         .then(v => {
           [this._foregroundColor, this._backgroundColor] = v;
           this.requestUpdate('backgroundColor', oldBackground);
+        })
+        .catch(() => {
+          [this._foregroundColor, this._backgroundColor] = [
+            'var(--text-primary-color)',
+            'var(--primary-color)',
+          ];
+          this.requestUpdate('backgroundColor', oldBackground);
         });
     } else {
-      this._foregroundColor = '#000';
-      this._backgroundColor = '#929292';
+      [this._foregroundColor, this._backgroundColor] = [
+        'var(--text-primary-color)',
+        'var(--primary-color)',
+      ];
       this.requestUpdate('backgroundColor', oldBackground);
     }
     this.requestUpdate('src', oldSrc);
@@ -233,11 +244,13 @@ export class ZoneBackground extends LitElement {
       'background-repeat': 'no-repeat',
       'background-size': `${backgroundWidth} ${backgroundHeight}`,
       'background-color': this._backgroundColor,
+      'border-radius': 'var(--ha-card-border-radius, 4px)',
     };
 
     const gradientStyle = {
       position: 'absolute',
       'background-image': `linear-gradient(${gradientDirection}, ${this._backgroundColor}, ${this._backgroundColor}00)`,
+      'border-radius': 'var(--ha-card-border-radius, 4px)',
       width,
       height,
     };
@@ -245,6 +258,7 @@ export class ZoneBackground extends LitElement {
     const overlayStyle = {
       position: 'absolute',
       'background-color': `${this._backgroundColor}7f`,
+      'border-radius': 'var(--ha-card-border-radius, 4px)',
       width,
       height,
     };
