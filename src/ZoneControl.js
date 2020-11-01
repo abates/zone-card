@@ -46,6 +46,15 @@ export class ZoneControl extends LitElement {
         color: var(--accent-color) !important;
         opacity: 1 !important;
       }
+
+      ha-slider {
+        --paper-slider-active-color: var(--zone-card-text-color, #000);
+        --paper-slider-knob-color: var(--zone-card-text-color, #000);
+        --paper-slider-container-color: var(
+          --zone-card-light-text-color,
+          #ffffff80
+        );
+      }
     `;
   }
 
@@ -133,11 +142,11 @@ export class ZoneControl extends LitElement {
         icon="hass:volume-medium"
         @click=${this.decreaseVolume}
       ></ha-icon-button>
-      <ha-paper-slider
+      <ha-slider
         class="${classMap({ hidden: !this.active })}"
         value=${this._volume * 100}
         @change=${this.setVolume}
-      ></ha-paper-slider>
+      ></ha-slider>
       <ha-icon-button
         class="${classMap({ hidden: !this.active })}"
         icon="hass:volume-high"

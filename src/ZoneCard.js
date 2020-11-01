@@ -6,6 +6,7 @@ export class ZoneCard extends LitElement {
     return {
       backgroundColor: { type: String },
       foregroundColor: { type: String },
+      foregroundLightColor: { type: String },
     };
   }
 
@@ -200,6 +201,7 @@ export class ZoneCard extends LitElement {
   _backgroundChanged(ev) {
     this.backgroundColor = ev.detail.backgroundColor;
     this.foregroundColor = ev.detail.foregroundColor;
+    this.foregroundLightColor = ev.detail.foregroundLightColor;
   }
 
   render() {
@@ -208,7 +210,8 @@ export class ZoneCard extends LitElement {
       '--secondary-text-color': this.foregroundColor,
       '--ha-card-header-color': this.foregroundColor,
       '--zone-card-text-color': this.foregroundColor,
-      '--mini-media-player-button-color': `${this.backgroundColor}b2`,
+      '--zone-card-light-text-color': this.foregroundLightColor,
+      '--mini-media-player-button-color': `${this.backgroundColor}`,
     };
 
     return html`

@@ -102,6 +102,28 @@ const customGenerator = colors => {
   return [foregroundColor, backgroundColor.hex];
 };
 
+function computeForeground(color, defaultColor) {
+  if (color.startsWith('--')) {
+    return defaultColor;
+  }
+
+  let r = 0;
+  let g = 0;
+  let b = 0;
+
+  if (color.length === 4) {
+    r = parseInt(`0x${color[1]}${color[1]}`, 16);
+    g = parseInt(`0x${color[2]}${color[2]}`, 16);
+    b = parseInt(`0x${color[3]}${color[3]}`, 16);
+  } else {
+    r = parseInt(`0x${color[1]}${color[2]}`, 16);
+    g = parseInt(`0x${color[3]}${color[4]}`, 16);
+    b = parseInt(`0x${color[5]}${color[6]}`, 16);
+  }
+
+  return `rgba(${r},${g},${b},0.5)`;
+}
+
 export class ZoneBackground extends LitElement {
   static get properties() {
     return {
@@ -130,6 +152,7 @@ export class ZoneBackground extends LitElement {
     super();
     this._backgroundColor = '#000';
     this._foregroundColor = '#fff';
+    this._foregroundLightColor = '#ffffff80';
   }
 
   async _attachObserver() {
@@ -179,18 +202,33 @@ export class ZoneBackground extends LitElement {
         .getPalette()
         .then(v => {
           [this._foregroundColor, this._backgroundColor] = v;
+          console.log('Foreground:', this._foregroundColor);
+          this._foregroundLightColor = computeForeground(
+            this._foregroundColor,
+            '--secondary-text-color)'
+          );
           this.requestUpdate('backgroundColor', oldBackground);
         })
         .catch(() => {
-          [this._foregroundColor, this._backgroundColor] = [
+          [
+            this._foregroundColor,
+            this._forgroundLighColor,
+            this._backgroundColor,
+          ] = [
             'var(--text-primary-color)',
+            'var(--secondary-text-color)',
             'var(--primary-color)',
           ];
           this.requestUpdate('backgroundColor', oldBackground);
         });
     } else {
-      [this._foregroundColor, this._backgroundColor] = [
+      [
+        this._foregroundColor,
+        this._forgroundLighColor,
+        this._backgroundColor,
+      ] = [
         'var(--text-primary-color)',
+        'var(--secondary-text-color)',
         'var(--primary-color)',
       ];
       this.requestUpdate('backgroundColor', oldBackground);
@@ -204,6 +242,7 @@ export class ZoneBackground extends LitElement {
         new CustomEvent('background-changed', {
           detail: {
             foregroundColor: this._foregroundColor,
+            foregroundLightColor: this._foregroundLightColor,
             backgroundColor: this._backgroundColor,
           },
         })
