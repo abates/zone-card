@@ -28,6 +28,7 @@
   "devDependencies": {
     "@open-wc/eslint-config": "^2.0.0",
     "@rollup/plugin-node-resolve": "^8.4.0",
+    "command-line-args": "^5.1.1",
     "concurrently": "^5.1.0",
     "es-dev-server": "^1.23.0",
     "eslint": "^6.1.0",
