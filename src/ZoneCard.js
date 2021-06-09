@@ -70,15 +70,9 @@ export class ZoneCard extends LitElement {
   }
 
   setConfig(config) {
-    if (!config.controller) {
-      throw new Error('You need to define an controller');
-    }
-
     if (!config.zones) {
       throw new Error('Zone entities must be specified');
     }
-
-    this.entity = config.controller;
 
     this.config = {
       ...config,
@@ -99,57 +93,28 @@ export class ZoneCard extends LitElement {
       },
     };
 
-    this.controllerConfig = {
-      entity: this.config.controller,
-      ...this.config.options,
-    };
-
-    this._sources = {};
+    this._sources = [];
     if (config.sources) {
-      for (let i = 0; i < config.sources.length; i += 1) {
-        this._sources[config.sources[i].name] = config.sources[i].options;
-      }
+      this._sources = config.sources;
     }
 
     this.zones = [];
     for (let i = 0; i < config.zones.length; i += 1) {
-      if (config.zones[i] !== this.config.controller) {
-        this.zones.push(document.createElement('zone-control'));
-        this.zones[this.zones.length - 1].entity = config.zones[i];
-      }
+      this.zones.push(document.createElement('zone-control'));
+      this.zones[this.zones.length - 1].entity = config.zones[i];
     }
   }
 
   firstUpdated() {
-    this.controller = this.shadowRoot.getElementById('controller');
     this.background = this.shadowRoot.getElementById('background');
     this.sourceSelect = this.shadowRoot.getElementById('source');
+    this.handleSourceChanged();
   }
 
   set hass(hass) {
     const oldHass = this._hass;
     this._hass = hass;
     if (this._hass) {
-      this._state = this._hass.states[this.config.controller];
-      if (this._state) {
-        this._name = this._state.attributes.friendly_name || this.entity;
-        this._source = this._state.attributes.source;
-        this._sourceList = this._state.attributes.source_list;
-
-        if (this._sourceConfig !== this._sources[this._source]) {
-          this._sourceConfig = this._sources[this._source];
-          if (this._sourceConfig) {
-            this._sourcePlayer = document.createElement('mini-media-player');
-            this._sourcePlayer.setConfig(this._sourceConfig);
-            this._sourceEntity = this._sourceConfig.entity;
-          } else {
-            this._sourcePlayer = undefined;
-          }
-        }
-      } else {
-        this._sourcePlayer = undefined;
-      }
-
       if (this._sourcePlayer) {
         this._sourcePlayer.hass = this._hass;
         this._sourceState = this._hass.states[this._sourceConfig.entity];
@@ -171,11 +136,8 @@ export class ZoneCard extends LitElement {
 
   updated(changedProperties) {
     if (changedProperties.has('hass') && this.hass) {
-      this.controller.hass = this._hass;
-
       for (let i = 0; i < this.zones.length; i += 1) {
         this.zones[i].hass = this._hass;
-        this.zones[i].controllerSource = this._source;
       }
     }
   }
@@ -185,14 +147,24 @@ export class ZoneCard extends LitElement {
   }
 
   handleSourceChanged() {
-    const source = this.sourceSelect.options[this.sourceSelect.selectedIndex]
-      .value;
+    const source = this._sources[this.sourceSelect.selectedIndex];
     if (this._source !== source) {
       this._source = source;
-      this.hass.callService('media_player', 'select_source', {
-        entity_id: this.entity,
-        source: this._source,
-      });
+      for (let i = 0; i < this.zones.length; i += 1) {
+        this.zones[i].controllerSource = this._source.name;
+      }
+
+      if (this._source.options !== undefined) {
+        this._sourceConfig = this._source.options;
+        this._sourcePlayer = document.createElement('mini-media-player');
+        this._sourcePlayer.setConfig(this._sourceConfig);
+        this._sourcePlayer.hass = this._hass;
+      } else {
+        this._sourceConfig = undefined;
+        this._sourcePlayer = undefined;
+        this._backgroundSrc = undefined;
+      }
+
       // Update the UI since the source has changed
       this.requestUpdate();
     }
@@ -202,6 +174,7 @@ export class ZoneCard extends LitElement {
     this.backgroundColor = ev.detail.backgroundColor;
     this.foregroundColor = ev.detail.foregroundColor;
     this.foregroundLightColor = ev.detail.foregroundLightColor;
+    this.requestUpdate();
   }
 
   render() {
@@ -220,22 +193,18 @@ export class ZoneCard extends LitElement {
         src=${this._backgroundSrc ? this._backgroundSrc : ''}
         @background-changed=${this._backgroundChanged}
       >
-        <ha-card header="${this._name}" style="${styleMap(haCardStyle)}">
+        <ha-card header="" style="${styleMap(haCardStyle)}">
           <div class="cardContent">
-            <!-- zone controller -->
-            <zone-control
-              id="controller"
-              entity="${this.entity}"
-              controllerSource="${this._source}"
-            ></zone-control>
             <div class="flex right">
               <select id="source" @change="${this.handleSourceChanged}">
-                ${this._sourceList.map(source =>
+                ${this._sources.map(source =>
                   this._source === source
-                    ? html`<option value="${source}" selected="selected"
-                        >${source}</option
+                    ? html`<option value="${source.name}" selected="selected"
+                        >${source.name}</option
                       >`
-                    : html`<option value="${source}">${source}</option>`
+                    : html`<option value="${source.name}"
+                        >${source.name}</option
+                      >`
                 )}
               </select>
               <ha-icon class="source-input" icon="hass:login-variant"></ha-icon>

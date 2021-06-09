@@ -72,21 +72,30 @@ export class ZoneControl extends LitElement {
 
   turnOn() {
     if (this._state) {
+      console.log('This state is', this._state);
       if (this._state.state === 'off') {
-        this.hass.callService('media_player', 'turn_on', {
+        this.hass
+          .callService('media_player', 'turn_on', {
+            entity_id: this.entity,
+          })
+          .then(() =>
+            this.hass.callService('media_player', 'volume_set', {
+              entity_id: this.entity,
+              volume_level: 0.3,
+            })
+          )
+          .then(() =>
+            this.hass.callService('media_player', 'select_source', {
+              entity_id: this.entity,
+              source: this.controllerSource,
+            })
+          );
+      } else {
+        this.hass.callService('media_player', 'select_source', {
           entity_id: this.entity,
-        });
-
-        this.hass.callService('media_player', 'volume_set', {
-          entity_id: this.entity,
-          volume_level: 0.3,
+          source: this.controllerSource,
         });
       }
-
-      this.hass.callService('media_player', 'select_source', {
-        entity_id: this.entity,
-        source: this.controllerSource,
-      });
     }
   }
 

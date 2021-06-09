@@ -202,7 +202,6 @@ export class ZoneBackground extends LitElement {
         .getPalette()
         .then(v => {
           [this._foregroundColor, this._backgroundColor] = v;
-          console.log('Foreground:', this._foregroundColor);
           this._foregroundLightColor = computeForeground(
             this._foregroundColor,
             '--secondary-text-color)'
