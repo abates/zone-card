@@ -72,7 +72,6 @@ export class ZoneControl extends LitElement {
 
   turnOn() {
     if (this._state) {
-      console.log('This state is', this._state);
       if (this._state.state === 'off') {
         this.hass
           .callService('media_player', 'turn_on', {
