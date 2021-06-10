@@ -221,15 +221,12 @@ export class ZoneBackground extends LitElement {
           this.requestUpdate('backgroundColor', oldBackground);
         });
     } else {
-      [
-        this._foregroundColor,
-        this._forgroundLighColor,
-        this._backgroundColor,
-      ] = [
-        'var(--text-primary-color)',
-        'var(--secondary-text-color)',
-        'var(--primary-color)',
-      ];
+      [this._foregroundColor, this._forgroundLighColor, this._backgroundColor] =
+        [
+          'var(--text-primary-color)',
+          'var(--secondary-text-color)',
+          'var(--primary-color)',
+        ];
       this.requestUpdate('backgroundColor', oldBackground);
     }
     this.requestUpdate('src', oldSrc);
