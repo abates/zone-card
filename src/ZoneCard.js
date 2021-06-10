@@ -1,5 +1,5 @@
-import { html, css, LitElement } from 'lit-element';
-import { styleMap } from 'lit-html/directives/style-map';
+import { html, css, LitElement } from 'lit';
+import { styleMap } from 'lit-html/directives/style-map.js';
 
 export class ZoneCard extends LitElement {
   static get properties() {

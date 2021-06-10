@@ -1,4 +1,4 @@
-import { html, css, LitElement } from 'lit-element';
+import { html, css, LitElement } from 'lit';
 
 export class ZoneToggle extends LitElement {
   static get properties() {

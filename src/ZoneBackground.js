@@ -1,5 +1,5 @@
-import { html, css, LitElement } from 'lit-element';
-import { styleMap } from 'lit-html/directives/style-map';
+import { html, css, LitElement } from 'lit';
+import { styleMap } from 'lit-html/directives/style-map.js';
 import 'node-vibrant/dist/vibrant';
 
 function debounce(func, wait, immediate) {
@@ -302,9 +302,9 @@ export class ZoneBackground extends LitElement {
     };
 
     return html`
-      <div id="background" style="${styleMap(imageStyle)}">
-        <div style="${styleMap(gradientStyle)}"></div>
-        <div style="${styleMap(overlayStyle)}"></div>
+      <div id="background" style=${styleMap(imageStyle)}>
+        <div style=${styleMap(gradientStyle)}></div>
+        <div style=${styleMap(overlayStyle)}></div>
         <slot></slot>
       </div>
     `;
