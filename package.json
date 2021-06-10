@@ -1,6 +1,6 @@
 {
   "name": "zone-card",
-  "version": "0.0.0",
+  "version": "0.1.14",
   "description": "Webcomponent zone-card following open-wc recommendations",
   "author": "zone-card",
   "license": "MIT",
