@@ -196,7 +196,11 @@ export class ZoneCard extends LitElement {
         <ha-card header="" style="${styleMap(haCardStyle)}">
           <div class="cardContent">
             <div class="flex right">
-              <select id="source" @blur="${this.handleSourceChanged}">
+              <select
+                id="source"
+                @change="${this.handleSourceChanged}"
+                @blur="${this.handleSourceChanged}"
+              >
                 ${this._sources.map(source =>
                   this._source === source
                     ? html`<option value="${source.name}" selected="selected">
