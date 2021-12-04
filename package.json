@@ -1,6 +1,6 @@
 {
   "name": "zone-card",
-  "version": "0.1.17",
+  "version": "0.1.18",
   "description": "Webcomponent zone-card following open-wc recommendations",
   "author": "zone-card",
   "license": "MIT",
@@ -27,7 +27,7 @@
   "devDependencies": {
     "@open-wc/eslint-config": "^4.3.0",
     "@rollup/plugin-node-resolve": "^13.0.0",
-    "es-dev-server": "^2.1.0",
+    "es-dev-server": "^1.14.2",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
     "husky": "^6.0.0",
