@@ -1,6 +1,6 @@
 {
   "name": "zone-card",
-  "version": "0.1.18",
+  "version": "0.1.19",
   "description": "Webcomponent zone-card following open-wc recommendations",
   "author": "zone-card",
   "license": "MIT",
@@ -9,7 +9,7 @@
   "scripts": {
     "build": "npm run lint && npm run rollup",
     "rollup": "rollup -c",
-    "start": "es-dev-server",
+    "start": "web-dev-server",
     "lint:eslint": "eslint --ext .js,.html . --ignore-path .gitignore",
     "format:eslint": "eslint --ext .js,.html . --fix --ignore-path .gitignore",
     "lint:prettier": "prettier \"**/*.js\" --check --ignore-path .gitignore",
@@ -27,7 +27,7 @@
   "devDependencies": {
     "@open-wc/eslint-config": "^4.3.0",
     "@rollup/plugin-node-resolve": "^13.0.0",
-    "es-dev-server": "^1.14.2",
+    "@web/dev-server": "^0.1.28",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
     "husky": "^6.0.0",
