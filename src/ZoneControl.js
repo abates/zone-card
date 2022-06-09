@@ -148,7 +148,8 @@ export class ZoneControl extends LitElement {
       <ha-icon-button
         class="${classMap({ hidden: !this.active })}"
         @click=${this.decreaseVolume}
-      ><ha-icon icon="hass:volume-medium"></ha-icon></ha-icon-button>
+        ><ha-icon icon="hass:volume-medium"></ha-icon
+      ></ha-icon-button>
       <ha-slider
         class="${classMap({ hidden: !this.active })}"
         value=${this._volume * 100}
@@ -157,11 +158,11 @@ export class ZoneControl extends LitElement {
       <ha-icon-button
         class="${classMap({ hidden: !this.active })}"
         @click=${this.increaseVolume}
-      ><ha-icon icon="hass:volume-high"></ha-icon></ha-icon-button>
-      <ha-icon-button
-        ?color="${this.active}"
-        @click=${this.handlePowerClick}
-      ><ha-icon icon="hass:power"></ha-icon></ha-icon-button>
+        ><ha-icon icon="hass:volume-high"></ha-icon
+      ></ha-icon-button>
+      <ha-icon-button ?color="${this.active}" @click=${this.handlePowerClick}
+        ><ha-icon icon="hass:power"></ha-icon
+      ></ha-icon-button>
     `;
   }
 }
