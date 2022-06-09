@@ -77,6 +77,7 @@ export class ZoneCard extends LitElement {
     this.config = {
       ...config,
       options: {
+        type: 'custom:mini-media-player',
         group: true,
         icon: 'mdi:music-circle',
         ...config.options,
