@@ -1,0 +1,11 @@
+{
+  "editor.tabSize": 2,
+  "git.ignoreLimitWarning": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  "prettier.printWidth": 120,
+  "[typescript]": {
+    "prettier.printWidth": 120
+  }
+}

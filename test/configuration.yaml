@@ -1,0 +1,495 @@
+lovelace:
+  mode: storage
+  dashboards:
+    lovelace-yaml:
+      mode: yaml
+      title: 'Zone Card'
+      filename: test/lovelace.yaml
+
+# ---------------------------------------------------------------------------
+# Zone media players
+#
+# Each zone is a Universal Media Player ("media player template") assembled
+# from three dependent helper components:
+#   * input_boolean.<zone>_power  -> power / on-off state
+#   * input_number.<zone>_volume  -> volume level (0.0 - 1.0)
+#   * input_select.<zone>_source  -> selected source + source_list
+#
+# The zone-card custom card drives each player with the standard
+# media_player services (turn_on, turn_off, volume_set, volume_up,
+# volume_down, select_source) and reads back the state, volume_level,
+# source and source_list attributes.
+# ---------------------------------------------------------------------------
+
+input_boolean:
+  zone_11_power:
+    name: Kitchen Power
+  zone_12_power:
+    name: Dining Room Power
+  zone_13_power:
+    name: Living Room Power
+  zone_14_power:
+    name: Upstairs Hall Power
+  zone_15_power:
+    name: Master Bedroom Power
+  zone_16_power:
+    name: Sun Room Power
+  family_room_receiver_power:
+    name: Family Room Receiver Power
+  theater_receiver_power:
+    name: Theater Receiver Power
+  music_player_power:
+    name: Music Player Power
+  music_player_playing:
+    name: Music Player Playing
+
+input_number:
+  zone_11_volume:
+    name: Kitchen Volume
+    min: 0
+    max: 1
+    step: 0.05
+    initial: 0.3
+    mode: slider
+  zone_12_volume:
+    name: Dining Room Volume
+    min: 0
+    max: 1
+    step: 0.05
+    initial: 0.3
+    mode: slider
+  zone_13_volume:
+    name: Living Room Volume
+    min: 0
+    max: 1
+    step: 0.05
+    initial: 0.3
+    mode: slider
+  zone_14_volume:
+    name: Upstairs Hall Volume
+    min: 0
+    max: 1
+    step: 0.05
+    initial: 0.3
+    mode: slider
+  zone_15_volume:
+    name: Master Bedroom Volume
+    min: 0
+    max: 1
+    step: 0.05
+    initial: 0.3
+    mode: slider
+  zone_16_volume:
+    name: Sun Room Volume
+    min: 0
+    max: 1
+    step: 0.05
+    initial: 0.3
+    mode: slider
+  family_room_receiver_volume:
+    name: Family Room Receiver Volume
+    min: 0
+    max: 1
+    step: 0.05
+    initial: 0.3
+    mode: slider
+  theater_receiver_volume:
+    name: Theater Receiver Volume
+    min: 0
+    max: 1
+    step: 0.05
+    initial: 0.3
+    mode: slider
+  music_player_volume:
+    name: Music Player Volume
+    min: 0
+    max: 1
+    step: 0.05
+    initial: 0.3
+    mode: slider
+
+input_select:
+  zone_11_source:
+    name: Kitchen Source
+    initial: Music Player
+    options: &source_options
+      - Music Player
+      - Kitchen Bluetooth
+      - Sun Room Bluetooth
+      - Master Bedroom Bluetooth
+      - Cable
+  zone_12_source:
+    name: Dining Room Source
+    initial: Music Player
+    options: *source_options
+  zone_13_source:
+    name: Living Room Source
+    initial: Music Player
+    options: *source_options
+  zone_14_source:
+    name: Upstairs Hall Source
+    initial: Music Player
+    options: *source_options
+  zone_15_source:
+    name: Master Bedroom Source
+    initial: Music Player
+    options: *source_options
+  zone_16_source:
+    name: Sun Room Source
+    initial: Music Player
+    options: *source_options
+  family_room_receiver_source:
+    name: Family Room Receiver Source
+    initial: Music Player
+    options: *source_options
+  theater_receiver_source:
+    name: Theater Receiver Source
+    initial: Music Player
+    options: *source_options
+  music_player_track:
+    name: Media Player Tracks
+    initial: 'Track 1'
+    options:
+      - 'Track 1'
+      - 'Track 2'
+      - 'Track 3'
+      - 'Track 4'
+media_player:
+  - platform: universal
+    name: Kitchen
+    unique_id: zone_11
+    attributes:
+      state: input_boolean.zone_11_power
+      volume_level: input_number.zone_11_volume
+      source: input_select.zone_11_source
+      source_list: input_select.zone_11_source|options
+    commands:
+      turn_on:
+        service: input_boolean.turn_on
+        target:
+          entity_id: input_boolean.zone_11_power
+      turn_off:
+        service: input_boolean.turn_off
+        target:
+          entity_id: input_boolean.zone_11_power
+      volume_set:
+        service: input_number.set_value
+        target:
+          entity_id: input_number.zone_11_volume
+        data:
+          value: '{{ volume_level }}'
+      volume_up:
+        service: input_number.increment
+        target:
+          entity_id: input_number.zone_11_volume
+      volume_down:
+        service: input_number.decrement
+        target:
+          entity_id: input_number.zone_11_volume
+      select_source:
+        service: input_select.select_option
+        target:
+          entity_id: input_select.zone_11_source
+        data:
+          option: '{{ source }}'
+
+  - platform: universal
+    name: Dining Room
+    unique_id: zone_12
+    attributes:
+      state: input_boolean.zone_12_power
+      volume_level: input_number.zone_12_volume
+      source: input_select.zone_12_source
+      source_list: input_select.zone_12_source|options
+    commands:
+      turn_on:
+        service: input_boolean.turn_on
+        target:
+          entity_id: input_boolean.zone_12_power
+      turn_off:
+        service: input_boolean.turn_off
+        target:
+          entity_id: input_boolean.zone_12_power
+      volume_set:
+        service: input_number.set_value
+        target:
+          entity_id: input_number.zone_12_volume
+        data:
+          value: '{{ volume_level }}'
+      volume_up:
+        service: input_number.increment
+        target:
+          entity_id: input_number.zone_12_volume
+      volume_down:
+        service: input_number.decrement
+        target:
+          entity_id: input_number.zone_12_volume
+      select_source:
+        service: input_select.select_option
+        target:
+          entity_id: input_select.zone_12_source
+        data:
+          option: '{{ source }}'
+
+  - platform: universal
+    name: Living Room
+    unique_id: zone_13
+    attributes:
+      state: input_boolean.zone_13_power
+      volume_level: input_number.zone_13_volume
+      source: input_select.zone_13_source
+      source_list: input_select.zone_13_source|options
+    commands:
+      turn_on:
+        service: input_boolean.turn_on
+        target:
+          entity_id: input_boolean.zone_13_power
+      turn_off:
+        service: input_boolean.turn_off
+        target:
+          entity_id: input_boolean.zone_13_power
+      volume_set:
+        service: input_number.set_value
+        target:
+          entity_id: input_number.zone_13_volume
+        data:
+          value: '{{ volume_level }}'
+      volume_up:
+        service: input_number.increment
+        target:
+          entity_id: input_number.zone_13_volume
+      volume_down:
+        service: input_number.decrement
+        target:
+          entity_id: input_number.zone_13_volume
+      select_source:
+        service: input_select.select_option
+        target:
+          entity_id: input_select.zone_13_source
+        data:
+          option: '{{ source }}'
+
+  - platform: universal
+    name: Upstairs Hall
+    unique_id: zone_14
+    attributes:
+      state: input_boolean.zone_14_power
+      volume_level: input_number.zone_14_volume
+      source: input_select.zone_14_source
+      source_list: input_select.zone_14_source|options
+    commands:
+      turn_on:
+        service: input_boolean.turn_on
+        target:
+          entity_id: input_boolean.zone_14_power
+      turn_off:
+        service: input_boolean.turn_off
+        target:
+          entity_id: input_boolean.zone_14_power
+      volume_set:
+        service: input_number.set_value
+        target:
+          entity_id: input_number.zone_14_volume
+        data:
+          value: '{{ volume_level }}'
+      volume_up:
+        service: input_number.increment
+        target:
+          entity_id: input_number.zone_14_volume
+      volume_down:
+        service: input_number.decrement
+        target:
+          entity_id: input_number.zone_14_volume
+      select_source:
+        service: input_select.select_option
+        target:
+          entity_id: input_select.zone_14_source
+        data:
+          option: '{{ source }}'
+
+  - platform: universal
+    name: Master Bedroom
+    unique_id: zone_15
+    attributes:
+      state: input_boolean.zone_15_power
+      volume_level: input_number.zone_15_volume
+      source: input_select.zone_15_source
+      source_list: input_select.zone_15_source|options
+    commands:
+      turn_on:
+        service: input_boolean.turn_on
+        target:
+          entity_id: input_boolean.zone_15_power
+      turn_off:
+        service: input_boolean.turn_off
+        target:
+          entity_id: input_boolean.zone_15_power
+      volume_set:
+        service: input_number.set_value
+        target:
+          entity_id: input_number.zone_15_volume
+        data:
+          value: '{{ volume_level }}'
+      volume_up:
+        service: input_number.increment
+        target:
+          entity_id: input_number.zone_15_volume
+      volume_down:
+        service: input_number.decrement
+        target:
+          entity_id: input_number.zone_15_volume
+      select_source:
+        service: input_select.select_option
+        target:
+          entity_id: input_select.zone_15_source
+        data:
+          option: '{{ source }}'
+
+  - platform: universal
+    name: Sun Room
+    unique_id: zone_16
+    attributes:
+      state: input_boolean.zone_16_power
+      volume_level: input_number.zone_16_volume
+      source: input_select.zone_16_source
+      source_list: input_select.zone_16_source|options
+    commands:
+      turn_on:
+        service: input_boolean.turn_on
+        target:
+          entity_id: input_boolean.zone_16_power
+      turn_off:
+        service: input_boolean.turn_off
+        target:
+          entity_id: input_boolean.zone_16_power
+      volume_set:
+        service: input_number.set_value
+        target:
+          entity_id: input_number.zone_16_volume
+        data:
+          value: '{{ volume_level }}'
+      volume_up:
+        service: input_number.increment
+        target:
+          entity_id: input_number.zone_16_volume
+      volume_down:
+        service: input_number.decrement
+        target:
+          entity_id: input_number.zone_16_volume
+      select_source:
+        service: input_select.select_option
+        target:
+          entity_id: input_select.zone_16_source
+        data:
+          option: '{{ source }}'
+
+  - platform: universal
+    name: Family Room Receiver
+    unique_id: family_room_receiver
+    attributes:
+      state: input_boolean.family_room_receiver_power
+      volume_level: input_number.family_room_receiver_volume
+      source: input_select.family_room_receiver_source
+      source_list: input_select.family_room_receiver_source|options
+    commands:
+      turn_on:
+        service: input_boolean.turn_on
+        target:
+          entity_id: input_boolean.family_room_receiver_power
+      turn_off:
+        service: input_boolean.turn_off
+        target:
+          entity_id: input_boolean.family_room_receiver_power
+      volume_set:
+        service: input_number.set_value
+        target:
+          entity_id: input_number.family_room_receiver_volume
+        data:
+          value: '{{ volume_level }}'
+      volume_up:
+        service: input_number.increment
+        target:
+          entity_id: input_number.family_room_receiver_volume
+      volume_down:
+        service: input_number.decrement
+        target:
+          entity_id: input_number.family_room_receiver_volume
+      select_source:
+        service: input_select.select_option
+        target:
+          entity_id: input_select.family_room_receiver_source
+        data:
+          option: '{{ source }}'
+
+  - platform: universal
+    name: Theater Receiver
+    unique_id: theater_receiver
+    attributes:
+      state: input_boolean.theater_receiver_power
+      volume_level: input_number.theater_receiver_volume
+      source: input_select.theater_receiver_source
+      source_list: input_select.theater_receiver_source|options
+    commands:
+      turn_on:
+        service: input_boolean.turn_on
+        target:
+          entity_id: input_boolean.theater_receiver_power
+      turn_off:
+        service: input_boolean.turn_off
+        target:
+          entity_id: input_boolean.theater_receiver_power
+      volume_set:
+        service: input_number.set_value
+        target:
+          entity_id: input_number.theater_receiver_volume
+        data:
+          value: '{{ volume_level }}'
+      volume_up:
+        service: input_number.increment
+        target:
+          entity_id: input_number.theater_receiver_volume
+      volume_down:
+        service: input_number.decrement
+        target:
+          entity_id: input_number.theater_receiver_volume
+      select_source:
+        service: input_select.select_option
+        target:
+          entity_id: input_select.theater_receiver_source
+        data:
+          option: '{{ source }}'
+
+  - platform: universal
+    name: Music Player
+    unique_id: music_player
+    attributes:
+      state: input_boolean.music_player_power
+    commands:
+      turn_on:
+        service: input_boolean.turn_on
+        target:
+          entity_id: input_boolean.music_player_power
+      turn_off:
+        service: input_boolean.turn_off
+        target:
+          entity_id: input_boolean.music_player_power
+      media_play:
+        service: input_boolean.turn_on
+        target:
+          entity_id: input_boolean.music_player_playing
+      media_pause:
+        service: input_boolean.turn_off
+        target:
+          entity_id: input_boolean.music_player_playing
+      media_stop:
+        service: input_boolean.turn_off
+        target:
+          entity_id: input_boolean.music_player_playing
+      media_previous_track:
+        service: input_select.select_previous
+        target:
+          entity_id: input_select.music_player_track
+      media_next_track:
+        service: input_select.select_next
+        target:
+          entity_id: input_select.music_player_track

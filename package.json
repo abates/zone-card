@@ -7,9 +7,8 @@
   "main": "index.js",
   "module": "index.js",
   "scripts": {
-    "build": "npm run lint && npm run rollup",
-    "rollup": "rollup -c",
-    "start": "web-dev-server",
+    "build": "npm run lint && npm run rollup -c",
+    "watch": "rollup -c --watch --no-watch.clearScreen --sourcemap",
     "lint:eslint": "eslint --ext .js,.html . --ignore-path .gitignore",
     "format:eslint": "eslint --ext .js,.html . --fix --ignore-path .gitignore",
     "lint:prettier": "prettier \"**/*.js\" --check --ignore-path .gitignore",
@@ -18,45 +17,32 @@
     "format": "npm run format:eslint && npm run format:prettier"
   },
   "dependencies": {
-    "@koa/cors": "^3.1.0",
-    "@polymer/iron-dropdown": "^3.0.1",
-    "lit": "^2.0.2",
-    "lit-html": "^2.0.2",
-    "node-vibrant": "^3.1.6"
+    "@kipk/load-ha-components": "^1.0.3",
+    "custom-card-helpers": "^2.0.0",
+    "home-assistant-js-websocket": "^9.6.0",
+    "lit": "^3.3.3",
+    "node-vibrant": "^4.0.4"
   },
   "devDependencies": {
-    "@open-wc/eslint-config": "^4.3.0",
-    "@rollup/plugin-node-resolve": "^13.0.0",
-    "@web/dev-server": "^0.1.28",
-    "eslint": "^7.32.0",
-    "eslint-config-prettier": "^8.3.0",
-    "husky": "^6.0.0",
-    "lint-staged": "^11.2.6",
-    "prettier": "^2.3.1"
-  },
-  "eslintConfig": {
-    "globals": {
-      "window": true
-    },
-    "extends": [
-      "@open-wc/eslint-config",
-      "eslint-config-prettier"
-    ]
-  },
-  "prettier": {
-    "singleQuote": true,
-    "arrowParens": "avoid"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
-  "lint-staged": {
-    "*.js": [
-      "eslint --fix",
-      "prettier --write",
-      "git add"
-    ]
+    "@awesome.me/webawesome": "^3.10.0",
+    "@rollup/plugin-commonjs": "^26.0.0",
+    "@rollup/plugin-json": "^6.1.0",
+    "@rollup/plugin-node-resolve": "^15.2.0",
+    "@rollup/plugin-terser": "^0.4.4",
+    "@rollup/plugin-typescript": "^11.1.0",
+    "@typescript-eslint/eslint-plugin": "^8.0.0",
+    "@typescript-eslint/parser": "^8.0.0",
+    "esbuild": "^0.25.0",
+    "eslint": "^9.39.5",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-prettier": "^5.5.6",
+    "prettier": "^3.8.1",
+    "rollup": "^4.20.0",
+    "rollup-plugin-css-only": "^4.5.5",
+    "rollup-plugin-esbuild": "^6.2.1",
+    "rollup-plugin-serve": "^1.1.1",
+    "tslib": "^2.6.0",
+    "typescript": "^5.9.3"
   }
 }
