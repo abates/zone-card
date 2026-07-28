@@ -1,5 +1,6 @@
 ## editors
 /.idea
+/.claude/settings.local.json
 
 ## system files
 .DS_Store

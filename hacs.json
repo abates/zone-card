@@ -1,0 +1,6 @@
+{
+  "name": "Zone Card",
+  "filename": "zone-card.js",
+  "render_readme": true,
+  "homeassistant": "2024.1.0"
+}

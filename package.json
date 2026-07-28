@@ -1,20 +1,17 @@
 {
   "name": "zone-card",
   "version": "0.1.21",
-  "description": "Webcomponent zone-card following open-wc recommendations",
-  "author": "zone-card",
+  "description": "A Home Assistant Lovelace card for managing source selection and volume across a group of media player zones",
+  "author": "abates",
   "license": "MIT",
-  "main": "index.js",
-  "module": "index.js",
+  "type": "module",
+  "main": "dist/zone-card.js",
+  "module": "dist/zone-card.js",
   "scripts": {
-    "build": "npm run lint && npm run rollup -c",
+    "build": "rollup -c",
     "watch": "rollup -c --watch --no-watch.clearScreen --sourcemap",
-    "lint:eslint": "eslint --ext .js,.html . --ignore-path .gitignore",
-    "format:eslint": "eslint --ext .js,.html . --fix --ignore-path .gitignore",
-    "lint:prettier": "prettier \"**/*.js\" --check --ignore-path .gitignore",
-    "format:prettier": "prettier \"**/*.js\" --write --ignore-path .gitignore",
-    "lint": "npm run lint:eslint && npm run lint:prettier",
-    "format": "npm run format:eslint && npm run format:prettier"
+    "lint": "eslint .",
+    "format": "eslint . --fix"
   },
   "dependencies": {
     "@kipk/load-ha-components": "^1.0.3",
