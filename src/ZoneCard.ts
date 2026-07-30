@@ -159,13 +159,9 @@ export class ZoneCard extends LitElement implements LovelaceCard {
 
   public render() {
     const haCardStyle = {
+      color: this._foregroundColor,
       "--primary-text-color": this._foregroundColor,
-      "--secondary-text-color": this._foregroundColor,
-      "--ha-card-header-color": this._foregroundLightColor || "var(--text-primary-color)",
-      "--zone-card-text-color": this._foregroundColor || "var(--text-primary-color)",
-      "--zone-card-light-text-color": this._foregroundLightColor || "var(--text-primary-color)",
-      "--mmp-button-color": this._backgroundColor || "var(--primary-color)",
-      "--state-icon-color": this._foregroundColor || "var(--text-primary-color)",
+      "--secondary-text-color": this._foregroundLightColor,
     };
 
     let state = "off";
@@ -210,7 +206,7 @@ export class ZoneCard extends LitElement implements LovelaceCard {
           @background-changed=${this.handleBackgroundChanged}
         ></zone-background>
         <div class="cardContent" style="${styleMap(haCardStyle)}">
-          <div class="flex">
+          <div id="source-selection">
             <state-badge
               .hass=${this.hass}
               .stateObj=${this._sourceState}
@@ -241,14 +237,6 @@ export class ZoneCard extends LitElement implements LovelaceCard {
       :host {
         display: block;
         color: var(--primary-text-color);
-
-        --control-select-menu-focus-color: var(--secondary-text-color);
-        --control-select-menu-text-color: var(--primary-text-color);
-        --control-select-menu-background-color: var(--disabled-color);
-        --control-select-menu-background-opacity: 0.2;
-        --control-select-menu-border-radius: var(--ha-border-radius-lg);
-        --control-select-menu-height: 48px;
-        --control-select-menu-padding: 6px 10px;
       }
 
       ha-icon.source-input {
@@ -260,24 +248,10 @@ export class ZoneCard extends LitElement implements LovelaceCard {
         height: 100%;
       }
 
-      zone-background {
-        display: flex;
-        position: absolute;
-        top: 0;
-        left: 0;
-        height: 100%;
-        width: 100%;
-        transition: filter 0.8s;
-      }
-
-      .cardContent {
-        color: var(--text-primary-color);
-      }
-
-      .flex {
+      #source-selection {
         display: flex;
         align-items: center;
-        padding: 0;
+        padding: 10px 0 0 0;
       }
 
       ha-control-select-menu {

@@ -24,10 +24,6 @@ export class ZoneControl extends LitElement {
         display: flex;
         flex-direction: row;
         align-items: center;
-        color: var(--zone-card-text-color, #000);
-      }
-
-      zone-toggle {
       }
 
       .label {
@@ -47,19 +43,12 @@ export class ZoneControl extends LitElement {
       }
 
       ha-icon-button {
-        color: var(--zone-card-text-color, var(--primary-text-color));
         transition: color 0.25s;
       }
 
-      ha-icon-button[color] {
-        color: var(--accent-color) !important;
-        opacity: 1 !important;
-      }
-
       ha-slider {
-        --paper-slider-active-color: var(--zone-card-text-color, #000);
-        --paper-slider-knob-color: var(--zone-card-text-color, #000);
-        --paper-slider-container-color: var(--zone-card-light-text-color, #ffffff80);
+        --ha-slider-thumb-color: var(--primary-text-color);
+        --ha-slider-indicator-color: hsl(from var(--primary-text-color) h s calc(l - 12));
       }
     `;
   }

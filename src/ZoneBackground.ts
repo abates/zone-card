@@ -200,7 +200,7 @@ export class ZoneBackground extends LitElement {
     super();
     this._backgroundColor = undefined;
     this.foregroundColor = "#fff";
-    this.foregroundLightColor = "#ffffff80";
+    this.foregroundLightColor = "#ffffff";
   }
 
   async _attachObserver() {
