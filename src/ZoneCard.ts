@@ -157,6 +157,19 @@ export class ZoneCard extends LitElement implements LovelaceCard {
     }
   }
 
+  shouldUpdate(changedProperties: Map<string, unknown>) {
+    // Log exactly what triggered the update request
+    for (const [key, oldValue] of changedProperties.entries()) {
+      console.log(`Property '${key}' changed from ${oldValue} to ${(this as any)[key]}`);
+    }
+    return super.shouldUpdate(changedProperties);
+  }
+
+  updated(changedProperties: Map<string, unknown>) {
+    super.updated(changedProperties);
+    console.log(`Render completed due to changes in: ${[...changedProperties.keys()]}`);
+  }
+
   public render() {
     const haCardStyle = {
       color: this._foregroundColor,
