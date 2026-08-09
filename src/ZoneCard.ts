@@ -34,6 +34,8 @@ export class ZoneCard extends LitElement implements LovelaceCard {
 
   @state() private _unsubscribe?: () => void;
 
+  @state() private state: string = "off";
+
   _hass?: HomeAssistant;
 
   getCardSize(): number | Promise<number> {
@@ -45,6 +47,7 @@ export class ZoneCard extends LitElement implements LovelaceCard {
   }
 
   public set hass(hass: HomeAssistant) {
+    console.log("Setting hass", hass);
     if (hass) {
       this._hass = hass;
       if (this.shadowRoot) {
@@ -57,6 +60,16 @@ export class ZoneCard extends LitElement implements LovelaceCard {
             console.warn("Failed to set hass on min-media-player");
           }
         }
+      }
+      let state = "off";
+      for (let i = 0; i < this.zones.length; i += 1) {
+        const zoneState = this.hass?.states[this.zones[i]];
+        if (zoneState && zoneState.attributes.source === this._source?.name && zoneState.state === "on") {
+          state = "on";
+        }
+      }
+      if (state !== this.state) {
+        this.state = state;
       }
     }
   }
@@ -157,18 +170,18 @@ export class ZoneCard extends LitElement implements LovelaceCard {
     }
   }
 
-  shouldUpdate(changedProperties: Map<string, unknown>) {
-    // Log exactly what triggered the update request
-    for (const [key, oldValue] of changedProperties.entries()) {
-      console.log(`Property '${key}' changed from ${oldValue} to ${(this as any)[key]}`);
-    }
-    return super.shouldUpdate(changedProperties);
-  }
+  // shouldUpdate(changedProperties: Map<string, unknown>) {
+  //   // Log exactly what triggered the update request
+  //   for (const [key, oldValue] of changedProperties.entries()) {
+  //     console.log(`Property '${key}' changed from ${oldValue} to ${(this as any)[key]}`);
+  //   }
+  //   return super.shouldUpdate(changedProperties);
+  // }
 
-  updated(changedProperties: Map<string, unknown>) {
-    super.updated(changedProperties);
-    console.log(`Render completed due to changes in: ${[...changedProperties.keys()]}`);
-  }
+  // updated(changedProperties: Map<string, unknown>) {
+  //   super.updated(changedProperties);
+  //   console.log(`Render completed due to changes in: ${[...changedProperties.keys()]}`);
+  // }
 
   public render() {
     const haCardStyle = {
@@ -176,14 +189,6 @@ export class ZoneCard extends LitElement implements LovelaceCard {
       "--primary-text-color": this._foregroundColor,
       "--secondary-text-color": this._foregroundLightColor,
     };
-
-    let state = "off";
-    for (let i = 0; i < this.zones.length; i += 1) {
-      const zoneState = this.hass?.states[this.zones[i]];
-      if (zoneState && zoneState.attributes.source === this._source?.name && zoneState.state === "on") {
-        state = "on";
-      }
-    }
 
     const sources = [];
     let selectedValue = null;
@@ -215,7 +220,7 @@ export class ZoneCard extends LitElement implements LovelaceCard {
           .hass=${this.hass}
           .controllerSource=${this._source?.entity}
           .controllerSourceState=${this._sourceState}
-          .state=${state}
+          .state=${this.state}
           @background-changed=${this.handleBackgroundChanged}
         ></zone-background>
         <div class="cardContent" style="${styleMap(haCardStyle)}">
