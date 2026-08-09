@@ -47,7 +47,6 @@ export class ZoneCard extends LitElement implements LovelaceCard {
   }
 
   public set hass(hass: HomeAssistant) {
-    console.log("Setting hass", hass);
     if (hass) {
       this._hass = hass;
       if (this.shadowRoot) {
