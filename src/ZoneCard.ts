@@ -34,7 +34,7 @@ export class ZoneCard extends LitElement implements LovelaceCard {
 
   @state() private _unsubscribe?: () => void;
 
-  @state() _hass?: HomeAssistant;
+  _hass?: HomeAssistant;
 
   getCardSize(): number | Promise<number> {
     return 1;

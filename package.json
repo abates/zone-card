@@ -1,6 +1,6 @@
 {
   "name": "zone-card",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A Home Assistant Lovelace card for managing source selection and volume across a group of media player zones",
   "author": "abates",
   "license": "MIT",
