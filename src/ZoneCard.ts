@@ -187,6 +187,7 @@ export class ZoneCard extends LitElement implements LovelaceCard {
       color: this._foregroundColor,
       "--primary-text-color": this._foregroundColor,
       "--secondary-text-color": this._foregroundLightColor,
+      "--background-color": this._backgroundColor,
     };
 
     const sources = [];
@@ -277,6 +278,7 @@ export class ZoneCard extends LitElement implements LovelaceCard {
 
       .source-player {
         min-height: 120px;
+        --mini-media-player-button-color: rgb(from var(--background-color) r g b / 0.9);
       }
     `;
   }
